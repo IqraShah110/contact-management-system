@@ -1,0 +1,51 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+.envrc
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.crt
+*.cer
+id_rsa
+id_dsa
+*.pfx
+.npmrc
+*.tfvars
+*.tfvars.json
+secrets/
+
+# Backend (Spring Boot / Maven)
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Keep safe local overrides out of git
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-dev.properties
+backend/src/main/resources/application-secrets.properties
+
+# Frontend (React / Node)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Prevent committing local archives/backups
+*.zip
+*.tar
+*.gz
