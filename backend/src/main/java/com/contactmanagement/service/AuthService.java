@@ -1,9 +1,13 @@
 package com.contactmanagement.service;
 
+import com.contactmanagement.dto.ChangePasswordRequest;
+import com.contactmanagement.dto.LoginRequest;
+import com.contactmanagement.dto.LoginResponse;
 import com.contactmanagement.dto.RegisterRequest;
 import com.contactmanagement.entity.User;
 import com.contactmanagement.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -43,6 +47,55 @@ public class AuthService {
         user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
+    }
+
+    public LoginResponse login(LoginRequest request) {
+        String identifier = normalize(request.getIdentifier());
+        if (!StringUtils.hasText(identifier)) {
+            throw new IllegalArgumentException("Email or phone number is required");
+        }
+
+        User authenticatedUser = findByIdentifier(identifier);
+
+        if (!passwordEncoder.matches(request.getPassword(), authenticatedUser.getPasswordHash())) {
+            throw new IllegalArgumentException("Invalid credentials");
+        }
+
+        return new LoginResponse(
+                "Login successful",
+                authenticatedUser.getId(),
+                authenticatedUser.getFullName(),
+                authenticatedUser.getEmail(),
+                authenticatedUser.getPhoneNumber()
+        );
+    }
+
+    public void changePassword(ChangePasswordRequest request) {
+        String identifier = normalize(request.getIdentifier());
+        if (!StringUtils.hasText(identifier)) {
+            throw new IllegalArgumentException("Email or phone number is required");
+        }
+
+        User user = findByIdentifier(identifier);
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        if (request.getCurrentPassword().equals(request.getNewPassword())) {
+            throw new IllegalArgumentException("New password must be different from current password");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    private User findByIdentifier(String identifier) {
+        Optional<User> user = userRepository.findByEmail(identifier);
+        if (user.isEmpty()) {
+            user = userRepository.findByPhoneNumber(identifier);
+        }
+        return user.orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
     }
 
     private String normalize(String value) {

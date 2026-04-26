@@ -1,5 +1,8 @@
 package com.contactmanagement.controller;
 
+import com.contactmanagement.dto.ChangePasswordRequest;
+import com.contactmanagement.dto.LoginRequest;
+import com.contactmanagement.dto.LoginResponse;
 import com.contactmanagement.dto.RegisterRequest;
 import com.contactmanagement.service.AuthService;
 import jakarta.validation.Valid;
@@ -27,6 +30,17 @@ public class AuthController {
         authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "User registered successfully"));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
