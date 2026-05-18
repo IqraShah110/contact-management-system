@@ -4,9 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public class ChangePasswordRequest {
 
-    @NotBlank(message = "Email or phone number is required")
-    private String identifier;
-
     @NotBlank(message = "Current password is required")
     private String currentPassword;
 
@@ -14,14 +11,6 @@ public class ChangePasswordRequest {
     private String newPassword;
 
     public ChangePasswordRequest() {
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
     }
 
     public String getCurrentPassword() {

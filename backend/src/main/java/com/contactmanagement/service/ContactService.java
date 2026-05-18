@@ -9,12 +9,15 @@ import com.contactmanagement.entity.Contact;
 import com.contactmanagement.entity.ContactEmail;
 import com.contactmanagement.entity.ContactPhone;
 import com.contactmanagement.entity.User;
+import com.contactmanagement.exception.ResourceNotFoundException;
 import com.contactmanagement.repository.ContactEmailRepository;
 import com.contactmanagement.repository.ContactPhoneRepository;
 import com.contactmanagement.repository.ContactRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class ContactService {
+
+    private static final Logger log = LoggerFactory.getLogger(ContactService.class);
 
     private final ContactRepository contactRepository;
     private final ContactEmailRepository contactEmailRepository;
@@ -51,8 +56,8 @@ public class ContactService {
         // Add emails if provided
         if (request.getEmails() != null && !request.getEmails().isEmpty()) {
             List<ContactEmail> emails = request.getEmails().stream()
-                    .map(emailDTO -> new ContactEmail(savedContact, emailDTO.getEmail(), 
-                                                     ContactEmail.EmailLabel.valueOf(emailDTO.getLabel().toUpperCase())))
+                    .map(emailDTO -> new ContactEmail(savedContact, emailDTO.getEmail(),
+                            parseEmailLabel(emailDTO.getLabel())))
                     .collect(Collectors.toList());
             contactEmailRepository.saveAll(emails);
             savedContact.setEmails(emails);
@@ -62,12 +67,13 @@ public class ContactService {
         if (request.getPhones() != null && !request.getPhones().isEmpty()) {
             List<ContactPhone> phones = request.getPhones().stream()
                     .map(phoneDTO -> new ContactPhone(savedContact, phoneDTO.getPhoneNumber(),
-                                                     ContactPhone.PhoneLabel.valueOf(phoneDTO.getLabel().toUpperCase())))
+                            parsePhoneLabel(phoneDTO.getLabel())))
                     .collect(Collectors.toList());
             contactPhoneRepository.saveAll(phones);
             savedContact.setPhones(phones);
         }
 
+        log.info("Contact created id={} for user id={}", savedContact.getId(), user.getId());
         return mapToResponse(savedContact);
     }
 
@@ -80,7 +86,7 @@ public class ContactService {
     @Transactional(readOnly = true)
     public ContactResponse getContactById(Long contactId, User user) {
         Contact contact = contactRepository.findByIdAndUser(contactId, user)
-                .orElseThrow(() -> new IllegalArgumentException("Contact not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found"));
         return mapToResponse(contact);
     }
 
@@ -97,7 +103,7 @@ public class ContactService {
     @Transactional
     public ContactResponse updateContact(Long contactId, User user, UpdateContactRequest request) {
         Contact contact = contactRepository.findByIdAndUser(contactId, user)
-                .orElseThrow(() -> new IllegalArgumentException("Contact not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found"));
 
         if (!StringUtils.hasText(request.getFirstName()) || !StringUtils.hasText(request.getLastName())) {
             throw new IllegalArgumentException("First name and last name are required");
@@ -116,7 +122,7 @@ public class ContactService {
             // Add new emails
             List<ContactEmail> newEmails = request.getEmails().stream()
                     .map(emailDTO -> new ContactEmail(contact, emailDTO.getEmail(),
-                                                     ContactEmail.EmailLabel.valueOf(emailDTO.getLabel().toUpperCase())))
+                            parseEmailLabel(emailDTO.getLabel())))
                     .collect(Collectors.toList());
             contact.setEmails(contactEmailRepository.saveAll(newEmails));
         }
@@ -129,21 +135,45 @@ public class ContactService {
             // Add new phones
             List<ContactPhone> newPhones = request.getPhones().stream()
                     .map(phoneDTO -> new ContactPhone(contact, phoneDTO.getPhoneNumber(),
-                                                     ContactPhone.PhoneLabel.valueOf(phoneDTO.getLabel().toUpperCase())))
+                            parsePhoneLabel(phoneDTO.getLabel())))
                     .collect(Collectors.toList());
             contact.setPhones(contactPhoneRepository.saveAll(newPhones));
         }
 
         Contact updatedContact = contactRepository.save(contact);
+        log.info("Contact updated id={} for user id={}", contactId, user.getId());
         return mapToResponse(updatedContact);
     }
 
     @Transactional
     public void deleteContact(Long contactId, User user) {
         if (!contactRepository.existsByIdAndUser(contactId, user)) {
-            throw new IllegalArgumentException("Contact not found");
+            throw new ResourceNotFoundException("Contact not found");
         }
         contactRepository.deleteByIdAndUser(contactId, user);
+        log.info("Contact deleted id={} for user id={}", contactId, user.getId());
+    }
+
+    private static ContactEmail.EmailLabel parseEmailLabel(String raw) {
+        if (raw == null || raw.isBlank()) {
+            throw new IllegalArgumentException("Email label is required (work, personal, or other)");
+        }
+        try {
+            return ContactEmail.EmailLabel.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid email label: use work, personal, or other", ex);
+        }
+    }
+
+    private static ContactPhone.PhoneLabel parsePhoneLabel(String raw) {
+        if (raw == null || raw.isBlank()) {
+            throw new IllegalArgumentException("Phone label is required (work, home, personal, or other)");
+        }
+        try {
+            return ContactPhone.PhoneLabel.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid phone label: use work, home, personal, or other", ex);
+        }
     }
 
     private ContactResponse mapToResponse(Contact contact) {
