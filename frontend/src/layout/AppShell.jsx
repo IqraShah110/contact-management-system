@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useAuth } from '../context/AuthContext';
 
 export function AppShell({ children }) {
@@ -29,3 +30,7 @@ export function AppShell({ children }) {
     </div>
   );
 }
+
+AppShell.propTypes = {
+  children: PropTypes.node,
+};

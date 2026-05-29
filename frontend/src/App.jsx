@@ -1,4 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useAuth } from './context/AuthContext';
 import { AppShell } from './layout/AppShell';
 import Login from './pages/Login.jsx';
@@ -42,6 +43,10 @@ function PublicOnly({ children }) {
   }
   return children;
 }
+
+PublicOnly.propTypes = {
+  children: PropTypes.node,
+};
 
 export default function App() {
   return (

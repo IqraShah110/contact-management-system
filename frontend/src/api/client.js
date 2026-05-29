@@ -16,7 +16,8 @@ async function parseBody(res) {
  * Calls the Spring Boot API with cookies (session authentication).
  */
 export async function apiFetch(path, options = {}) {
-  const url = `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const url = `${API_BASE}${normalizedPath}`;
   const headers = {
     ...(options.body && !(options.body instanceof FormData)
       ? { 'Content-Type': 'application/json' }

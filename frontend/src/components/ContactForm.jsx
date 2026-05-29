@@ -1,4 +1,17 @@
-import { EMAIL_LABELS, PHONE_LABELS } from './contactForm.js';
+import PropTypes from 'prop-types';
+import { EMAIL_LABELS, PHONE_LABELS, rowKey } from './contactForm.js';
+
+const emailRowShape = PropTypes.shape({
+  email: PropTypes.string,
+  label: PropTypes.string,
+  _key: PropTypes.string,
+});
+
+const phoneRowShape = PropTypes.shape({
+  phoneNumber: PropTypes.string,
+  label: PropTypes.string,
+  _key: PropTypes.string,
+});
 
 export function ContactForm({ form, setForm }) {
   function updateField(key, val) {
@@ -13,7 +26,10 @@ export function ContactForm({ form, setForm }) {
   }
 
   function addEmail() {
-    setForm((f) => ({ ...f, emails: [...f.emails, { email: '', label: 'WORK' }] }));
+    setForm((f) => ({
+      ...f,
+      emails: [...f.emails, { email: '', label: 'WORK', _key: rowKey('email') }],
+    }));
   }
 
   function removeEmail(idx) {
@@ -31,7 +47,10 @@ export function ContactForm({ form, setForm }) {
   }
 
   function addPhone() {
-    setForm((f) => ({ ...f, phones: [...f.phones, { phoneNumber: '', label: 'WORK' }] }));
+    setForm((f) => ({
+      ...f,
+      phones: [...f.phones, { phoneNumber: '', label: 'WORK', _key: rowKey('phone') }],
+    }));
   }
 
   function removePhone(idx) {
@@ -61,7 +80,7 @@ export function ContactForm({ form, setForm }) {
       <fieldset className="fieldset">
         <legend>Emails</legend>
         {form.emails.map((row, idx) => (
-          <div key={`e-${idx}`} className="row gap-sm align-start">
+          <div key={row._key} className="row gap-sm align-start">
             <label className="field grow">
               <span className="sr-only">Address</span>
               <input
@@ -94,7 +113,7 @@ export function ContactForm({ form, setForm }) {
       <fieldset className="fieldset">
         <legend>Phones</legend>
         {form.phones.map((row, idx) => (
-          <div key={`p-${idx}`} className="row gap-sm align-start">
+          <div key={row._key} className="row gap-sm align-start">
             <label className="field grow">
               <span className="sr-only">Number</span>
               <input
@@ -125,3 +144,14 @@ export function ContactForm({ form, setForm }) {
     </div>
   );
 }
+
+ContactForm.propTypes = {
+  form: PropTypes.shape({
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    title: PropTypes.string,
+    emails: PropTypes.arrayOf(emailRowShape),
+    phones: PropTypes.arrayOf(phoneRowShape),
+  }).isRequired,
+  setForm: PropTypes.func.isRequired,
+};
