@@ -14,7 +14,7 @@ public class CorsConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
-            @Value("${app.cors.allowed-origins:http://localhost:3000,http://127.0.0.1:3000}")
+            @Value("${app.cors.allowed-origins:http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173}")
                     String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
         for (String raw : Arrays.asList(allowedOrigins.split(","))) {
