@@ -186,8 +186,15 @@ public class ContactService {
                 .map(phone -> new ContactPhoneDTO(phone.getId(), phone.getPhoneNumber(), phone.getLabel().toString()))
                 .toList() : List.of();
 
-        return ContactResponse.create(contact.getId(), contact.getFirstName(), contact.getLastName(),
-                                  contact.getTitle(), emailDTOs, phoneDTOs, 
-                                  contact.getCreatedAt(), contact.getUpdatedAt());
+        return ContactResponse.builder()
+                .id(contact.getId())
+                .firstName(contact.getFirstName())
+                .lastName(contact.getLastName())
+                .title(contact.getTitle())
+                .emails(emailDTOs)
+                .phones(phoneDTOs)
+                .createdAt(contact.getCreatedAt())
+                .updatedAt(contact.getUpdatedAt())
+                .build();
     }
 }

@@ -18,25 +18,72 @@ public class ContactResponse {
         // Required for JSON serialization.
     }
 
-    public static ContactResponse create(
-            Long id,
-            String firstName,
-            String lastName,
-            String title,
-            List<ContactEmailDTO> emails,
-            List<ContactPhoneDTO> phones,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
-        ContactResponse response = new ContactResponse();
-        response.id = id;
-        response.firstName = firstName;
-        response.lastName = lastName;
-        response.title = title;
-        response.emails = emails;
-        response.phones = phones;
-        response.createdAt = createdAt;
-        response.updatedAt = updatedAt;
-        return response;
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Long id;
+        private String firstName;
+        private String lastName;
+        private String title;
+        private List<ContactEmailDTO> emails;
+        private List<ContactPhoneDTO> phones;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder emails(List<ContactEmailDTO> emails) {
+            this.emails = emails;
+            return this;
+        }
+
+        public Builder phones(List<ContactPhoneDTO> phones) {
+            this.phones = phones;
+            return this;
+        }
+
+        public Builder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public ContactResponse build() {
+            ContactResponse response = new ContactResponse();
+            response.id = id;
+            response.firstName = firstName;
+            response.lastName = lastName;
+            response.title = title;
+            response.emails = emails;
+            response.phones = phones;
+            response.createdAt = createdAt;
+            response.updatedAt = updatedAt;
+            return response;
+        }
     }
 
     // Getters and Setters

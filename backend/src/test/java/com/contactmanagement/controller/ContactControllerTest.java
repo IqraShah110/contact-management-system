@@ -75,15 +75,16 @@ class ContactControllerTest {
     @Test
     void createContactReturns201() throws Exception {
         when(authenticationHelper.getAuthenticatedUser(any())).thenReturn(sampleUser());
-        ContactResponse body = ContactResponse.create(
-                1L,
-                "A",
-                "B",
-                "Ms",
-                List.of(new ContactEmailDTO(1L, "a@b.com", "WORK")),
-                List.of(new ContactPhoneDTO(1L, "123", "HOME")),
-                LocalDateTime.now(),
-                LocalDateTime.now());
+        ContactResponse body = ContactResponse.builder()
+                .id(1L)
+                .firstName("A")
+                .lastName("B")
+                .title("Ms")
+                .emails(List.of(new ContactEmailDTO(1L, "a@b.com", "WORK")))
+                .phones(List.of(new ContactPhoneDTO(1L, "123", "HOME")))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
         when(contactService.createContact(any(User.class), any())).thenReturn(body);
 
         mockMvc.perform(post("/api/contacts")
