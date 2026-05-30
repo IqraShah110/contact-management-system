@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { apiFetch } from '../api/client';
 import { Modal } from '../components/Modal.jsx';
 import { ContactForm } from '../components/ContactForm.jsx';
@@ -7,6 +8,31 @@ import {
   contactToForm,
   buildPayload,
 } from '../components/contactForm.js';
+
+const contactRowShape = PropTypes.shape({
+  id: PropTypes.number,
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  title: PropTypes.string,
+});
+
+const contactDetailShape = PropTypes.shape({
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  title: PropTypes.string,
+  emails: PropTypes.arrayOf(PropTypes.object),
+  phones: PropTypes.arrayOf(PropTypes.object),
+  createdAt: PropTypes.string,
+  updatedAt: PropTypes.string,
+});
+
+const formShape = PropTypes.shape({
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  title: PropTypes.string,
+  emails: PropTypes.arrayOf(PropTypes.object),
+  phones: PropTypes.arrayOf(PropTypes.object),
+});
 
 function SearchToolbar({ searchInput, setSearchInput, onSearch, onClear }) {
   return (
@@ -34,6 +60,13 @@ function SearchToolbar({ searchInput, setSearchInput, onSearch, onClear }) {
     </div>
   );
 }
+
+SearchToolbar.propTypes = {
+  searchInput: PropTypes.string.isRequired,
+  setSearchInput: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  onClear: PropTypes.func.isRequired,
+};
 
 function ContactsTableCard({ loading, content, onOpenDetail, onEdit, onDelete }) {
   if (loading) {
@@ -87,6 +120,14 @@ function ContactsTableCard({ loading, content, onOpenDetail, onEdit, onDelete })
   );
 }
 
+ContactsTableCard.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  content: PropTypes.arrayOf(contactRowShape).isRequired,
+  onOpenDetail: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
+
 function PaginationBar({ page, totalPages, onPrevious, onNext }) {
   if (totalPages <= 1) {
     return null;
@@ -106,6 +147,13 @@ function PaginationBar({ page, totalPages, onPrevious, onNext }) {
     </div>
   );
 }
+
+PaginationBar.propTypes = {
+  page: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  onPrevious: PropTypes.func.isRequired,
+  onNext: PropTypes.func.isRequired,
+};
 
 function ContactProfileModal({ detail, onClose }) {
   if (!detail) {
@@ -158,6 +206,11 @@ function ContactProfileModal({ detail, onClose }) {
   );
 }
 
+ContactProfileModal.propTypes = {
+  detail: contactDetailShape,
+  onClose: PropTypes.func.isRequired,
+};
+
 function EditorModal({ title, form, setForm, onClose, onSave }) {
   return (
     <Modal
@@ -178,6 +231,14 @@ function EditorModal({ title, form, setForm, onClose, onSave }) {
     </Modal>
   );
 }
+
+EditorModal.propTypes = {
+  title: PropTypes.string.isRequired,
+  form: formShape.isRequired,
+  setForm: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+};
 
 function DeleteConfirmModal({ deleteId, onClose, onConfirm }) {
   if (!deleteId) {
@@ -203,6 +264,12 @@ function DeleteConfirmModal({ deleteId, onClose, onConfirm }) {
     </Modal>
   );
 }
+
+DeleteConfirmModal.propTypes = {
+  deleteId: PropTypes.number,
+  onClose: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+};
 
 export default function ContactsPage() {
   const [page, setPage] = useState(0);

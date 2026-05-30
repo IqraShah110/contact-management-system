@@ -15,7 +15,6 @@ import com.contactmanagement.repository.ContactPhoneRepository;
 import com.contactmanagement.repository.ContactRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -58,7 +57,7 @@ public class ContactService {
             List<ContactEmail> emails = request.getEmails().stream()
                     .map(emailDTO -> new ContactEmail(savedContact, emailDTO.getEmail(),
                             parseEmailLabel(emailDTO.getLabel())))
-                    .collect(Collectors.toList());
+                    .toList();
             contactEmailRepository.saveAll(emails);
             savedContact.setEmails(emails);
         }
@@ -68,7 +67,7 @@ public class ContactService {
             List<ContactPhone> phones = request.getPhones().stream()
                     .map(phoneDTO -> new ContactPhone(savedContact, phoneDTO.getPhoneNumber(),
                             parsePhoneLabel(phoneDTO.getLabel())))
-                    .collect(Collectors.toList());
+                    .toList();
             contactPhoneRepository.saveAll(phones);
             savedContact.setPhones(phones);
         }
@@ -123,7 +122,7 @@ public class ContactService {
             List<ContactEmail> newEmails = request.getEmails().stream()
                     .map(emailDTO -> new ContactEmail(contact, emailDTO.getEmail(),
                             parseEmailLabel(emailDTO.getLabel())))
-                    .collect(Collectors.toList());
+                    .toList();
             contact.setEmails(contactEmailRepository.saveAll(newEmails));
         }
 
@@ -136,7 +135,7 @@ public class ContactService {
             List<ContactPhone> newPhones = request.getPhones().stream()
                     .map(phoneDTO -> new ContactPhone(contact, phoneDTO.getPhoneNumber(),
                             parsePhoneLabel(phoneDTO.getLabel())))
-                    .collect(Collectors.toList());
+                    .toList();
             contact.setPhones(contactPhoneRepository.saveAll(newPhones));
         }
 
@@ -180,14 +179,14 @@ public class ContactService {
         List<ContactEmailDTO> emailDTOs = contact.getEmails() != null ? 
             contact.getEmails().stream()
                 .map(email -> new ContactEmailDTO(email.getId(), email.getEmail(), email.getLabel().toString()))
-                .collect(Collectors.toList()) : List.of();
+                .toList() : List.of();
 
         List<ContactPhoneDTO> phoneDTOs = contact.getPhones() != null ? 
             contact.getPhones().stream()
                 .map(phone -> new ContactPhoneDTO(phone.getId(), phone.getPhoneNumber(), phone.getLabel().toString()))
-                .collect(Collectors.toList()) : List.of();
+                .toList() : List.of();
 
-        return new ContactResponse(contact.getId(), contact.getFirstName(), contact.getLastName(),
+        return ContactResponse.create(contact.getId(), contact.getFirstName(), contact.getLastName(),
                                   contact.getTitle(), emailDTOs, phoneDTOs, 
                                   contact.getCreatedAt(), contact.getUpdatedAt());
     }

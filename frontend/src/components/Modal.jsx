@@ -26,11 +26,6 @@ export function Modal({ title, children, onClose, footer }) {
       ref={dialogRef}
       className="modal-dialog"
       aria-labelledby="modal-title"
-      onClick={(event) => {
-        if (event.target === event.currentTarget) {
-          onClose();
-        }
-      }}
     >
       <div className="modal card">
         <header className="modal-header">

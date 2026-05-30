@@ -17,6 +17,7 @@ public class RegisterRequest {
     private String password;
 
     public RegisterRequest() {
+        // Required for JSON deserialization.
     }
 
     public String getFullName() {

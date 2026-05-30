@@ -75,7 +75,7 @@ class ContactControllerTest {
     @Test
     void createContactReturns201() throws Exception {
         when(authenticationHelper.getAuthenticatedUser(any())).thenReturn(sampleUser());
-        ContactResponse body = new ContactResponse(
+        ContactResponse body = ContactResponse.create(
                 1L,
                 "A",
                 "B",

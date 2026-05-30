@@ -11,6 +11,7 @@ public class ChangePasswordRequest {
     private String newPassword;
 
     public ChangePasswordRequest() {
+        // Required for JSON deserialization.
     }
 
     public String getCurrentPassword() {

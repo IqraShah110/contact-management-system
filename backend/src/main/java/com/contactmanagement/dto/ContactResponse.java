@@ -15,19 +15,28 @@ public class ContactResponse {
     private LocalDateTime updatedAt;
 
     public ContactResponse() {
+        // Required for JSON serialization.
     }
 
-    public ContactResponse(Long id, String firstName, String lastName, String title,
-                          List<ContactEmailDTO> emails, List<ContactPhoneDTO> phones,
-                          LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.title = title;
-        this.emails = emails;
-        this.phones = phones;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public static ContactResponse create(
+            Long id,
+            String firstName,
+            String lastName,
+            String title,
+            List<ContactEmailDTO> emails,
+            List<ContactPhoneDTO> phones,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
+        ContactResponse response = new ContactResponse();
+        response.id = id;
+        response.firstName = firstName;
+        response.lastName = lastName;
+        response.title = title;
+        response.emails = emails;
+        response.phones = phones;
+        response.createdAt = createdAt;
+        response.updatedAt = updatedAt;
+        return response;
     }
 
     // Getters and Setters

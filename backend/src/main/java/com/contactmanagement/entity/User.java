@@ -32,6 +32,7 @@ public class User {
     private LocalDateTime createdAt;
 
     public User() {
+        // Required by JPA.
     }
 
     public Long getId() {

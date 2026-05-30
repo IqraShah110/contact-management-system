@@ -18,6 +18,7 @@ public class UpdateContactRequest {
     private List<ContactPhoneDTO> phones;
 
     public UpdateContactRequest() {
+        // Required for JSON deserialization.
     }
 
     // Getters and Setters

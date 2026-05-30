@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+    private static final String MESSAGE_KEY = "message";
 
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
@@ -55,7 +56,7 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("message", "User registered successfully"));
+                .body(Map.of(MESSAGE_KEY, "User registered successfully"));
     }
 
     @PostMapping("/login")
@@ -99,7 +100,7 @@ public class AuthController {
             session.invalidate();
         }
         log.info("User session cleared (logout)");
-        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+        return ResponseEntity.ok(Map.of(MESSAGE_KEY, "Logged out successfully"));
     }
 
     @PostMapping("/change-password")
@@ -109,6 +110,6 @@ public class AuthController {
         User user = authenticationHelper.getAuthenticatedUser(authentication);
         authService.changePassword(user, request);
         log.info("Password changed for userId={}", user.getId());
-        return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
+        return ResponseEntity.ok(Map.of(MESSAGE_KEY, "Password changed successfully"));
     }
 }
