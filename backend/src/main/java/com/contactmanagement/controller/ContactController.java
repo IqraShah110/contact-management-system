@@ -8,6 +8,8 @@ import com.contactmanagement.service.AuthenticationHelper;
 import com.contactmanagement.service.ContactService;
 import jakarta.validation.Valid;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/contacts")
 public class ContactController {
 
+    private static final Logger log = LoggerFactory.getLogger(ContactController.class);
+
     private final ContactService contactService;
     private final AuthenticationHelper authenticationHelper;
 
@@ -42,6 +46,7 @@ public class ContactController {
             Authentication authentication) {
         User user = authenticationHelper.getAuthenticatedUser(authentication);
         ContactResponse contact = contactService.createContact(user, request);
+        log.info("Contact created id={} for user id={}", contact.getId(), user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(contact);
     }
 
@@ -74,6 +79,7 @@ public class ContactController {
         User user = authenticationHelper.getAuthenticatedUser(authentication);
         Pageable pageable = PageRequest.of(page, size);
         Page<ContactResponse> contacts = contactService.searchContacts(user, searchTerm, pageable);
+        log.debug("Contact search userId={} term='{}' results={}", user.getId(), searchTerm, contacts.getTotalElements());
         return ResponseEntity.ok(contacts);
     }
 
@@ -84,6 +90,7 @@ public class ContactController {
             Authentication authentication) {
         User user = authenticationHelper.getAuthenticatedUser(authentication);
         ContactResponse contact = contactService.updateContact(id, user, request);
+        log.info("Contact updated id={} for user id={}", id, user.getId());
         return ResponseEntity.ok(contact);
     }
 
@@ -93,6 +100,7 @@ public class ContactController {
             Authentication authentication) {
         User user = authenticationHelper.getAuthenticatedUser(authentication);
         contactService.deleteContact(id, user);
+        log.info("Contact deleted id={} for user id={}", id, user.getId());
         return ResponseEntity.ok(Map.of("message", "Contact deleted successfully"));
     }
 }

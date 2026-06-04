@@ -162,4 +162,79 @@ class ContactControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
     }
+
+    @Test
+    void getContactByIdReturns200() throws Exception {
+        when(authenticationHelper.getAuthenticatedUser(any())).thenReturn(sampleUser());
+        ContactResponse body = ContactResponse.builder()
+                .id(3L)
+                .firstName("Jane")
+                .lastName("Doe")
+                .title("Director")
+                .emails(List.of())
+                .phones(List.of())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        when(contactService.getContactById(eq(3L), any(User.class))).thenReturn(body);
+
+        mockMvc.perform(get("/api/contacts/3").with(authenticatedUser()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Jane"))
+                .andExpect(jsonPath("$.lastName").value("Doe"));
+    }
+
+    @Test
+    void searchContactsReturnsPage() throws Exception {
+        when(authenticationHelper.getAuthenticatedUser(any())).thenReturn(sampleUser());
+        ContactResponse hit = ContactResponse.builder()
+                .id(2L)
+                .firstName("Alice")
+                .lastName("Smith")
+                .emails(List.of())
+                .phones(List.of())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        Page<ContactResponse> page = new PageImpl<>(List.of(hit), PageRequest.of(0, 10), 1);
+        when(contactService.searchContacts(any(User.class), eq("alice"), any())).thenReturn(page);
+
+        mockMvc.perform(get("/api/contacts/search")
+                        .with(authenticatedUser())
+                        .param("searchTerm", "alice")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].firstName").value("Alice"));
+    }
+
+    @Test
+    void updateContactReturns200() throws Exception {
+        when(authenticationHelper.getAuthenticatedUser(any())).thenReturn(sampleUser());
+        ContactResponse body = ContactResponse.builder()
+                .id(1L)
+                .firstName("Updated")
+                .lastName("Name")
+                .title("Lead")
+                .emails(List.of(new ContactEmailDTO(1L, "a@b.com", "WORK")))
+                .phones(List.of())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        when(contactService.updateContact(eq(1L), any(User.class), any())).thenReturn(body);
+
+        mockMvc.perform(put("/api/contacts/1")
+                        .with(authenticatedUser())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Updated",
+                                  "lastName": "Name",
+                                  "title": "Lead",
+                                  "emails": [{"email": "a@b.com", "label": "work"}]
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Updated"));
+    }
 }
