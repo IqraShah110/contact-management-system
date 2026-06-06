@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, login } = useAuth();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -32,7 +32,9 @@ export default function Register() {
     setLoading(true);
     try {
       await register(body);
-      navigate('/login', { replace: true });
+      const identifier = emailTrim || phoneTrim;
+      await login(identifier, password);
+      navigate('/contacts', { replace: true });
     } catch (err) {
       setError(err.body?.message || err.message || 'Registration failed');
     } finally {

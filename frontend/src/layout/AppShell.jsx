@@ -8,19 +8,19 @@ export function AppShell({ children }) {
   return (
     <div className="layout">
       <header className="topbar">
-        <div className="brand">
-          <NavLink to="/contacts">Contacts</NavLink>
-        </div>
         <nav className="nav-links">
           <NavLink to="/contacts" end className={({ isActive }) => (isActive ? 'active' : '')}>
-            Dashboard
+            Contacts
           </NavLink>
           <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
             Profile
           </NavLink>
         </nav>
-        <div className="user-chip muted">
-          {user?.fullName}
+        <div className="user-chip">
+          <span className="avatar" aria-hidden="true">
+            {user?.fullName?.charAt(0)?.toUpperCase() || '?'}
+          </span>
+          <span>{user?.fullName}</span>
           <button type="button" className="btn btn-ghost sm" onClick={() => logout()}>
             Log out
           </button>

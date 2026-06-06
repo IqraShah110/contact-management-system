@@ -34,6 +34,12 @@ const formShape = PropTypes.shape({
   phones: PropTypes.arrayOf(PropTypes.object),
 });
 
+function contactInitials(firstName, lastName) {
+  const first = firstName?.charAt(0) || '';
+  const last = lastName?.charAt(0) || '';
+  return (first + last).toUpperCase() || '?';
+}
+
 function SearchToolbar({ searchInput, setSearchInput, onSearch, onClear }) {
   return (
     <div className="toolbar row gap-md wrap">
@@ -80,7 +86,10 @@ function ContactsTableCard({ loading, content, onOpenDetail, onEdit, onDelete })
   if (content.length === 0) {
     return (
       <div className="card pad-none table-wrap">
-        <p className="pad-lg muted">No contacts yet. Create one to get started.</p>
+        <div className="empty-state">
+          <h3>No contacts yet</h3>
+          <p className="muted">Create a contact to get started.</p>
+        </div>
       </div>
     );
   }
@@ -99,11 +108,18 @@ function ContactsTableCard({ loading, content, onOpenDetail, onEdit, onDelete })
           {content.map((row) => (
             <tr key={row.id}>
               <td>
-                <button type="button" className="linklike" onClick={() => onOpenDetail(row.id)}>
-                  {row.firstName} {row.lastName}
-                </button>
+                <div className="contact-cell">
+                  <span className="avatar lg" aria-hidden="true">
+                    {contactInitials(row.firstName, row.lastName)}
+                  </span>
+                  <button type="button" className="linklike" onClick={() => onOpenDetail(row.id)}>
+                    {row.firstName} {row.lastName}
+                  </button>
+                </div>
               </td>
-              <td className="muted">{row.title || '—'}</td>
+              <td>
+                {row.title ? <span className="title-pill">{row.title}</span> : <span className="muted">—</span>}
+              </td>
               <td className="actions row gap-sm justify-end">
                 <button type="button" className="btn btn-ghost sm" onClick={() => onEdit(row)}>
                   Edit
@@ -367,10 +383,15 @@ export default function ContactsPage() {
       <div className="page-header row spread">
         <div>
           <h1>Contacts</h1>
-          <p className="muted small">Search by first or last name, manage your address book.</p>
+          <p className="muted small lead">Search by first or last name, manage your address book.</p>
+          {list ? (
+            <span className="page-stat">
+              {list.totalElements} contact{list.totalElements === 1 ? '' : 's'}
+            </span>
+          ) : null}
         </div>
         <button type="button" className="btn primary" onClick={openCreate}>
-          New contact
+          + New contact
         </button>
       </div>
 

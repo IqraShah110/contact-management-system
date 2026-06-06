@@ -36,10 +36,15 @@ export default function ProfilePage() {
   return (
     <div className="page narrow">
       <h1>Profile</h1>
-      <div className="card stack gap-md">
-        <div>
-          <h2>{user?.fullName}</h2>
-          <p className="muted small">Signed in session</p>
+      <div className="card pad-lg stack gap-md">
+        <div className="row gap-md align-start">
+          <span className="avatar lg" aria-hidden="true">
+            {user?.fullName?.charAt(0)?.toUpperCase() || '?'}
+          </span>
+          <div className="profile-intro">
+            <h2 className="name-heading">{user?.fullName}</h2>
+            <p className="muted small">Signed in session</p>
+          </div>
         </div>
         <dl className="kv">
           <div>
