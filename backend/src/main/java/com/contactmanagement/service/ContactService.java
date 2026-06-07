@@ -14,6 +14,7 @@ import com.contactmanagement.repository.ContactEmailRepository;
 import com.contactmanagement.repository.ContactPhoneRepository;
 import com.contactmanagement.repository.ContactRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,7 @@ public class ContactService {
         contact.setFirstName(request.getFirstName().trim());
         contact.setLastName(request.getLastName().trim());
         contact.setTitle(request.getTitle() != null ? request.getTitle().trim() : null);
-        contact.setUpdatedAt(LocalDateTime.now());
+        contact.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
 
         // Update emails
         if (request.getEmails() != null) {

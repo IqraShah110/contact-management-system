@@ -84,7 +84,7 @@ class ContactRepositoryTest {
         user.setEmail(email);
         user.setPhoneNumber(phone);
         user.setPasswordHash("hashed");
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.of(2024, 1, 1, 9, 0));
         return userRepository.save(user);
     }
 

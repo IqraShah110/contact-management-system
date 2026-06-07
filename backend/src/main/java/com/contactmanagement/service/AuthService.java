@@ -5,6 +5,7 @@ import com.contactmanagement.dto.RegisterRequest;
 import com.contactmanagement.entity.User;
 import com.contactmanagement.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,7 +46,7 @@ public class AuthService {
         user.setEmail(email);
         user.setPhoneNumber(phoneNumber);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now(ZoneOffset.UTC));
 
         User saved = userRepository.save(user);
         log.info("Registered new user id={}", saved.getId());

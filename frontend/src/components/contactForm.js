@@ -3,7 +3,7 @@ export const PHONE_LABELS = ['WORK', 'HOME', 'PERSONAL', 'OTHER'];
 
 export function rowKey(prefix) {
   const id = globalThis.crypto?.randomUUID?.();
-  return id ?? `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return id ?? `${prefix}-${Date.now()}`;
 }
 
 export function emptyContactForm() {

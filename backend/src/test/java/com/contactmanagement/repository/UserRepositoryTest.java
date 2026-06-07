@@ -22,7 +22,7 @@ class UserRepositoryTest {
         user.setEmail("ali@example.com");
         user.setPhoneNumber("03001234567");
         user.setPasswordHash("hashedPassword");
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.of(2024, 1, 1, 9, 0));
         userRepository.save(user);
 
         assertTrue(userRepository.existsByEmail("ali@example.com"));
@@ -37,7 +37,7 @@ class UserRepositoryTest {
         user.setEmail("sara@example.com");
         user.setPhoneNumber("03111234567");
         user.setPasswordHash("hashedPassword");
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.of(2024, 1, 1, 9, 0));
         userRepository.save(user);
 
         assertTrue(userRepository.existsByPhoneNumber("03111234567"));

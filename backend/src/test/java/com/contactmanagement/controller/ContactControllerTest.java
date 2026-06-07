@@ -82,8 +82,8 @@ class ContactControllerTest {
                 .title("Ms")
                 .emails(List.of(new ContactEmailDTO(1L, "a@b.com", "WORK")))
                 .phones(List.of(new ContactPhoneDTO(1L, "123", "HOME")))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.of(2024, 1, 1, 9, 0))
+                .updatedAt(LocalDateTime.of(2024, 1, 1, 9, 0))
                 .build();
         when(contactService.createContact(any(User.class), any())).thenReturn(body);
 
@@ -173,8 +173,8 @@ class ContactControllerTest {
                 .title("Director")
                 .emails(List.of())
                 .phones(List.of())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.of(2024, 1, 1, 9, 0))
+                .updatedAt(LocalDateTime.of(2024, 1, 1, 9, 0))
                 .build();
         when(contactService.getContactById(eq(3L), any(User.class))).thenReturn(body);
 
@@ -193,8 +193,8 @@ class ContactControllerTest {
                 .lastName("Smith")
                 .emails(List.of())
                 .phones(List.of())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.of(2024, 1, 1, 9, 0))
+                .updatedAt(LocalDateTime.of(2024, 1, 1, 9, 0))
                 .build();
         Page<ContactResponse> page = new PageImpl<>(List.of(hit), PageRequest.of(0, 10), 1);
         when(contactService.searchContacts(any(User.class), eq("alice"), any())).thenReturn(page);
@@ -218,8 +218,8 @@ class ContactControllerTest {
                 .title("Lead")
                 .emails(List.of(new ContactEmailDTO(1L, "a@b.com", "WORK")))
                 .phones(List.of())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.of(2024, 1, 1, 9, 0))
+                .updatedAt(LocalDateTime.of(2024, 1, 1, 9, 0))
                 .build();
         when(contactService.updateContact(eq(1L), any(User.class), any())).thenReturn(body);
 
